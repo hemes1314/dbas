@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:elasticsearch="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+
+    <!--此文件负责整个mvc中的配置-->
+
+    <!--启用spring的一些annotation -->
+    <context:annotation-config/>
+
+    <!-- 配置注解驱动 可以将request参数与绑定到controller参数上 -->
+    <mvc:annotation-driven/>
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀(如果最后一个还是表示文件夹,则最后的斜杠不要漏了) 使用JSP-->
+    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/"/><!--设置JSP文件的目录位置-->
+        <property name="suffix" value=".jsp"/>
+        <property name="exposeContextBeansAsAttributes" value="true"/>
+    </bean>
+
+    <!-- 自动扫描装配 -->
+    <context:component-scan base-package="com.ishansong.action.*"/>
+    <context:component-scan base-package="com.ishansong.serviceimpl.*"/>
+
+    <!--注解映射器 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+    <!--注解适配器 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>
+
+
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer"
+          class="com.ishansong.common.util.CustomizedPropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/jdbc.properties</value>
+                <value>/WEB-INF/elasticsearch.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <!--&lt;!&ndash; 初始化连接大小 &ndash;&gt;-->
+        <!--<property name="initialSize" value="${initialSize}"></property>-->
+        <!--&lt;!&ndash; 连接池最大数量 &ndash;&gt;-->
+        <!--<property name="maxActive" value="${maxActive}"></property>-->
+        <!--&lt;!&ndash; 连接池最大空闲 &ndash;&gt;-->
+        <!--<property name="maxIdle" value="${maxIdle}"></property>-->
+        <!--&lt;!&ndash; 连接池最小空闲 &ndash;&gt;-->
+        <!--<property name="minIdle" value="${minIdle}"></property>-->
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${maxWait}"></property>
+        <property name="validationQuery" value="SELECT 1"></property>
+        <property name="testWhileIdle" value="${testWhileIdle}"></property>
+        <property name="testOnBorrow" value="${testOnBorrow}"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}"></property>
+        <property name="numTestsPerEvictionRun" value="${numTestsPerEvictionRun}"></property>
+        <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}"></property>
+        <property name="removeAbandoned" value="${removeAbandoned}"></property>
+        <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"></property>
+    </bean>
+
+
+
+    <bean id="dataSource_backup" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url_backup}" />
+        <property name="username" value="${jdbc.username_backup}" />
+        <property name="password" value="${jdbc.password_backup}" />
+        <!--&lt;!&ndash; 初始化连接大小 &ndash;&gt;-->
+        <!--<property name="initialSize" value="${initialSize}"></property>-->
+        <!--&lt;!&ndash; 连接池最大数量 &ndash;&gt;-->
+        <!--<property name="maxActive" value="${maxActive}"></property>-->
+        <!--&lt;!&ndash; 连接池最大空闲 &ndash;&gt;-->
+        <!--<property name="maxIdle" value="${maxIdle}"></property>-->
+        <!--&lt;!&ndash; 连接池最小空闲 &ndash;&gt;-->
+        <!--<property name="minIdle" value="${minIdle}"></property>-->
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${maxWait}"></property>
+        <property name="validationQuery" value="SELECT 1"></property>
+        <property name="testWhileIdle" value="${testWhileIdle}"></property>
+        <property name="testOnBorrow" value="${testOnBorrow}"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}"></property>
+        <property name="numTestsPerEvictionRun" value="${numTestsPerEvictionRun}"></property>
+        <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}"></property>
+        <property name="removeAbandoned" value="${removeAbandoned}"></property>
+        <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"></property>
+    </bean>
+
+
+    <!-- 动态配置数据源 -->
+    <bean id ="mysqlSource" class= "com.ishansong.common.datasource.DynamicDataSource" >
+        <property name ="master" ref= "dataSource"></property >
+        <property name ="slaves">
+            <list>
+                <ref bean="dataSource_backup"/>
+            </list>
+        </property >
+    </bean >
+
+
+    <!-- 定义单个jdbc数据源的事务管理器 -->
+    <bean id="transactionManager"
+          class="com.ishansong.common.datasource.DynamicDataSourceTransactionManager">
+        <property name="dataSource" ref="mysqlSource" />
+    </bean>
+
+
+    <!-- 配置事务的传播特性 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--<tx:method name="insert*" propagation="REQUIRED" read-only="false"-->
+                       <!--rollback-for="Exception" />-->
+            <!--<tx:method name="delete*" propagation="REQUIRED" read-only="false"-->
+                       <!--rollback-for="Exception" />-->
+            <!--<tx:method name="update*" propagation="REQUIRED" read-only="false"-->
+                       <!--rollback-for="Exception" />-->
+            <!--<tx:method name="proc*" propagation="REQUIRED" read-only="false"-->
+                       <!--rollback-for="Exception" />-->
+            <!--<tx:method name="select*" read-only="true" />-->
+            <!--<tx:method name="get*" read-only="true" />-->
+
+            <!--  read-only 为false 的时候会连接主库，否则会连接从库 -->
+            <tx:method name="*" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+
+    <!-- 自动扫描目录下所有SQL映射的xml文件, -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="mysqlSource" />
+        <property name="mapperLocations" value="classpath*:com.ishansong.dao/*/*.xml" />
+        <property name="typeAliasesPackage" value="com.ishansong.model" />
+    </bean>
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+    <!-- 扫描指定包以及子包下的所有映射接口类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.ishansong.dao" />
+    </bean>
+
+    <!-- 那些类的哪些方法参与事务 -->
+    <aop:config>
+        <aop:pointcut id="allManagerMethod" expression="execution(* com.ishansong.dao..*(..))" />
+        <aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
+    </aop:config>
+
+
+
+    <!-- elasticsearch 客户端配置，进行初始化 ,  destroy-method="close"  这个配置表示连接不使用的时候，放回到连接池中-->
+    <bean id="client" factory-bean="esClientBuilder" factory-method="init" scope="prototype"  destroy-method="close"/>
+    <bean id="esClientBuilder" class="com.ishansong.common.util.EsClientBuilder">
+        <property name="clusterName" value="${elasticsearch.cluster.name}" />
+        <property name="nodeIpInfo" value="${elasticsearch.esNodes}" />
+    </bean>
+
+
+    <!-- 利用 spring 的 BeanPostProcessor  将数据字典初始化加载到缓存 -->
+    <bean id="dictionariesAction" class="com.ishansong.action.utils.DictionariesPostProcessor"/>
+    <bean id="startOnLoadService" class="com.ishansong.action.utils.DictionariesLoad">
+        <property name="cdCodeWordsegService" ref="cdCodeWordsegService"/>
+    </bean>
+
+
+</beans>

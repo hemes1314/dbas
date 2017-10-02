@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ishansong.dao.order.DmOrderTagResultMapper">
+
+
+    <select id="queryByOrderNumber" resultType="DmOrderTagResult" parameterType="java.lang.String">
+        SELECT * FROM dm_order_tag_all_result where order_number = #{orderNumber}
+    </select>
+
+</mapper>

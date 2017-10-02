@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ishansong.dao.biordermatched.BiOrderMatchedMapper">
+
+
+    <select id="queryByCourierId" resultType="BiOrderMatched" parameterType="java.lang.String">
+        SELECT * FROM bi_order_matched where courier_id = #{courierId}
+    </select>
+
+    <select id="queryByOrderNumber" resultType="BiOrderMatched" parameterType="java.lang.String">
+        SELECT * FROM bi_order_matched where order_number = #{orderNumber}
+    </select>
+
+    <select id="getByOrderNumber" resultType="BiOrderMatched" parameterType="java.lang.String">
+        SELECT * FROM bi_order_matched where order_number = #{orderNumber}
+    </select>
+
+    <select id="queryByAll" resultType="BiOrderMatched">
+        SELECT * FROM bi_order_matched
+    </select>
+</mapper>

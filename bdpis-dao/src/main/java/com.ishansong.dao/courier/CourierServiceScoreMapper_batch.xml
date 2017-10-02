@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ishansong.dao.courier.CourierServiceScoreMapper_batch">
+
+    <select id="GetscoreList" resultType="CourierServiceScore_batch" parameterType="java.util.List">
+        SELECT cast(courier_id as CHAR(100)) as courier_id ,cast(service_score as CHAR(100) ) as service_score
+        FROM courier_service_score where courier_id in
+        <foreach item="courier_id" index="index" collection="list" open="(" separator="," close=")">
+            #{courier_id}
+        </foreach>
+    </select>
+
+
+</mapper>

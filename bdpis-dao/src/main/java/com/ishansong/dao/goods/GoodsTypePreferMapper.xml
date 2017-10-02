@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ishansong.dao.goods.GoodsTypePreferMapper">
+
+    <resultMap id="BaseResultMap" type="com.ishansong.model.goods.GoodsTypePrefer" >
+        <result column="courier_id" property="courierId" jdbcType="VARCHAR" />
+        <result column="order_goods_prefer" property="orderGoodsPrefer" jdbcType="VARCHAR" />
+        <result column="etl_time" property="etlTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryByCourierId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT courier_id,order_goods_prefer,etl_time FROM dm_courier_goods_type_prefer where courier_id = #{courierId}
+    </select>
+
+</mapper>
